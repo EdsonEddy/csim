@@ -34,12 +34,12 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 
 csim can be used from the command line. Here are some usage examples:
 
-```sh
-import csim
+```python
+from csim import Compare
 
 code_a = "a = 5"
 code_b = "c = 50"
-similarity = csim.compare(code_a, code_b)
+similarity = Compare(code_a, code_b)
 print(f"Similarity: {similarity}")
 ```
 
