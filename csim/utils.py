@@ -1,5 +1,7 @@
 from .PythonParser import PythonParser
 
+GROUP_INDEX = 10**9
+
 EXCLUDED_RULE_INDICES = {
     # wrappers
     PythonParser.RULE_statement,

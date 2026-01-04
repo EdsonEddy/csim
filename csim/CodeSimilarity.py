@@ -1,7 +1,7 @@
 from .PythonParser import PythonParser
 from .PythonLexer import PythonLexer
 from .PythonParserVisitor import PythonParserVisitor
-from .utils import EXCLUDED_RULE_INDICES, EXCLUDED_TOKEN_TYPES
+from .utils import EXCLUDED_RULE_INDICES, EXCLUDED_TOKEN_TYPES, GROUP_INDEX
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
 from antlr4 import CommonTokenStream
 from zss import simple_distance, Node
@@ -34,7 +34,7 @@ class Visitor(PythonParserVisitor):
                 return children_nodes[0]
             elif len(children_nodes) > 1:
                 self.node_count += 1
-                group = Node(-1)
+                group = Node(GROUP_INDEX)
                 for c in children_nodes:
                     group.addkid(c)
                 return group
