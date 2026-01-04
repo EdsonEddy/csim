@@ -1,9 +1,9 @@
 from .PythonParser import PythonParser
 from .PythonLexer import PythonLexer
 from .PythonParserVisitor import PythonParserVisitor
+from .utils import EXCLUDED_RULE_INDICES, EXCLUDED_TOKEN_TYPES
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
 from antlr4 import CommonTokenStream
-from .utils import EXCLUDED_RULES, EXCLUDED_TOKENS
 from zss import simple_distance, Node
 
 
@@ -14,27 +14,27 @@ class Visitor(PythonParserVisitor):
         self.node_count = 0
 
     def visitChildren(self, node):
-        rule_name = type(node).__name__.replace("Context", "")
+        rule_index = node.getRuleIndex()
         children_nodes = []
 
         for child in node.getChildren():
             if isinstance(child, TerminalNode):
-                text = child.getText()
-                if text not in EXCLUDED_TOKENS and text.strip():
+                token = child.symbol
+                if token.type not in EXCLUDED_TOKEN_TYPES:
                     self.node_count += 1
-                    children_nodes.append(Node(f"TOKEN:{text}"))
+                    children_nodes.append(Node(token.type))
             else:
                 result = self.visit(child)
                 if result is not None:
                     children_nodes.append(result)
 
         # 1. Rules to collapse completely
-        if rule_name in EXCLUDED_RULES:
+        if rule_index in EXCLUDED_RULE_INDICES:
             if len(children_nodes) == 1:
                 return children_nodes[0]
             elif len(children_nodes) > 1:
                 self.node_count += 1
-                group = Node("GROUP")
+                group = Node(-1)
                 for c in children_nodes:
                     group.addkid(c)
                 return group
@@ -43,7 +43,7 @@ class Visitor(PythonParserVisitor):
 
         # 2. Valid rule, create node
         self.node_count += 1
-        zss_node = Node(rule_name)
+        zss_node = Node(rule_index)
         for c in children_nodes:
             zss_node.addkid(c)
 

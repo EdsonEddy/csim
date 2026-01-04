@@ -1,42 +1,55 @@
-EXCLUDED_RULES = {
+from .PythonParser import PythonParser
+
+EXCLUDED_RULE_INDICES = {
     # wrappers
-    "Statement",
-    "Statements",
-    "Simple_stmts",
-    "Simple_stmt",
-    "Star_expression",
-    "Star_expressions",
-    "Function_def_raw",
+    PythonParser.RULE_statement,
+    PythonParser.RULE_statements,
+    PythonParser.RULE_simple_stmts,
+    PythonParser.RULE_simple_stmt,
+    PythonParser.RULE_star_expression,
+    PythonParser.RULE_star_expressions,
+    PythonParser.RULE_function_def_raw,
     # precedence / expressions
-    "Disjunction",
-    "Conjunction",
-    "Inversion",
-    "Comparison",
-    "Bitwise_or",
-    "Bitwise_xor",
-    "Bitwise_and",
-    "Shift_expr",
-    "Sum",
-    "Term",
-    "Factor",
-    "Power",
-    "Await_primary",
-    "Primary",
-    "Atom",
+    PythonParser.RULE_disjunction,
+    PythonParser.RULE_conjunction,
+    PythonParser.RULE_inversion,
+    PythonParser.RULE_comparison,
+    PythonParser.RULE_bitwise_or,
+    PythonParser.RULE_bitwise_xor,
+    PythonParser.RULE_bitwise_and,
+    PythonParser.RULE_shift_expr,
+    PythonParser.RULE_sum,
+    PythonParser.RULE_term,
+    PythonParser.RULE_factor,
+    PythonParser.RULE_power,
+    PythonParser.RULE_await_primary,
+    PythonParser.RULE_primary,
+    PythonParser.RULE_atom,
     # names
-    "Name",
-    "Name_except_underscore",
+    PythonParser.RULE_name,
+    PythonParser.RULE_name_except_underscore,
     # other technicals
-    "Target_with_star_atom",
-    "Star_atom",
-    # collapse rules
-    "Import_name",
-    "Dotted_as_names",
-    "Dotted_as_name",
-    "Dotted_name",
+    PythonParser.RULE_target_with_star_atom,
+    PythonParser.RULE_star_atom,
+    # collapse (import)
+    PythonParser.RULE_import_name,
+    PythonParser.RULE_dotted_as_names,
+    PythonParser.RULE_dotted_as_name,
+    PythonParser.RULE_dotted_name,
 }
 
-EXCLUDED_TOKENS = {"(", ")", ":", ",", "<INDENT>", "<DEDENT>", "<EOF>"}
+from .PythonLexer import PythonLexer
+from antlr4 import Token
+
+EXCLUDED_TOKEN_TYPES = {
+    PythonLexer.LPAR,
+    PythonLexer.RPAR,
+    PythonLexer.COLON,
+    PythonLexer.COMMA,
+    PythonLexer.INDENT,
+    PythonLexer.DEDENT,
+    Token.EOF,
+}
 
 import argparse
 from pathlib import Path

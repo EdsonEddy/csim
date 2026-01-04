@@ -32,11 +32,14 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 
 ## Usage
 
-csim can be used from the command line. Here are some usage examples:
+csim can be used from the command line as follows:
+```sh
+csim -f file1.py file2.py
+```
 
+Alternatively, you can use csim as a Python module:
 ```python
 from csim import Compare
-
 code_a = "a = 5"
 code_b = "c = 50"
 similarity = Compare(code_a, code_b)
