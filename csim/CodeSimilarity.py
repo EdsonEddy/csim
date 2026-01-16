@@ -1,7 +1,7 @@
 from .PythonParser import PythonParser
 from .PythonLexer import PythonLexer
 from .PythonParserVisitor import PythonParserVisitor
-from .utils import EXCLUDED_RULE_INDICES, EXCLUDED_TOKEN_TYPES, GROUP_INDEX
+from .utils import EXCLUDED_TOKEN_TYPES, GROUP_INDEX, TOKEN_TYPE_OFFSET
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
 from antlr4 import CommonTokenStream
 from zss import simple_distance, Node
@@ -22,38 +22,36 @@ class Visitor(PythonParserVisitor):
                 token = child.symbol
                 if token.type not in EXCLUDED_TOKEN_TYPES:
                     self.node_count += 1
-                    children_nodes.append(Node(token.type))
+                    # Offset token types to avoid collision with rule indices
+                    token_type_index = token.type + TOKEN_TYPE_OFFSET
+                    children_nodes.append(Node(token_type_index))
             else:
-                # Special case: list nodes are collapsed into a single node
-                if child.getRuleIndex() == PythonParser.RULE_list:
-                    self.node_count += 1
-                    children_nodes.append(Node(PythonParser.RULE_list))
-                    continue
-
                 result = self.visit(child)
                 if result is not None:
                     children_nodes.append(result)
 
-        # 1. Rules to collapse completely
-        if rule_index in EXCLUDED_RULE_INDICES:
-            if len(children_nodes) == 1:
-                return children_nodes[0]
-            elif len(children_nodes) > 1:
-                self.node_count += 1
-                group = Node(GROUP_INDEX)
-                for c in children_nodes:
-                    group.addkid(c)
-                return group
-            else:
-                return None
+        # nodes compression
+        if len(children_nodes) == 1:
+            return children_nodes[0]
+        elif len(children_nodes) > 1:
+            self.node_count += 1
+            group = Node(GROUP_INDEX)
+            for c in children_nodes:
+                group.addkid(c)
+            return group
 
-        # 2. Valid rule, create node
         self.node_count += 1
         zss_node = Node(rule_index)
-        for c in children_nodes:
-            zss_node.addkid(c)
-
         return zss_node
+
+    """
+    Special case: handle star_named_expressions to avoid excessive nodes
+    e.g., [1, 2, 3, ..., k]
+    """
+    def visitStar_named_expressions(self, node):
+        list_idx = node.getRuleIndex()
+        self.node_count += 1
+        return Node(list_idx)
 
 
 def Normalize(tree):

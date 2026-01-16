@@ -1,6 +1,7 @@
 from .PythonParser import PythonParser
 
-GROUP_INDEX = 10**9
+GROUP_INDEX = -1000
+TOKEN_TYPE_OFFSET = 1000
 
 EXCLUDED_RULE_INDICES = {
     # wrappers
@@ -50,13 +51,45 @@ EXCLUDED_TOKEN_TYPES = {
     PythonLexer.COMMA,
     PythonLexer.INDENT,
     PythonLexer.DEDENT,
+    PythonLexer.NEWLINE,
     Token.EOF,
+}
+
+ALLOWED_RULE_INDICES = {
+    # Rule for file input
+    PythonParser.RULE_file_input,
+    # Rule for statements
+    PythonParser.RULE_statement,
+    PythonParser.RULE_simple_stmt,
+    PythonParser.RULE_compound_stmt,
+    # Rule for function definitions
+    PythonParser.RULE_function_def,
+    PythonParser.RULE_params,
+    # Rule for class definitions
+    PythonParser.RULE_class_def,
+    # Rule for conditional statements
+    PythonParser.RULE_if_stmt,
+    PythonParser.RULE_elif_stmt,
+    PythonParser.RULE_else_block,
+    # Rule for loops
+    PythonParser.RULE_while_stmt,
+    PythonParser.RULE_for_stmt,
+    # Rule for try-except blocks
+    PythonParser.RULE_try_stmt,
+    PythonParser.RULE_except_block,
+    PythonParser.RULE_finally_block,
+    # Rule for assignments
+    PythonParser.RULE_assignment,
+    # Rule for import statements
+    PythonParser.RULE_import_stmt,
+    # Rule for return statements
+    PythonParser.RULE_return_stmt,
+    # Rule for expressions
+    PythonParser.RULE_expression,
 }
 
 import argparse
 from pathlib import Path
-
-# Utility functions for argument parsing
 
 
 def get_file(file_path):

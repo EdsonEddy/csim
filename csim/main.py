@@ -6,24 +6,6 @@ from .utils import process_files, get_file
 from .CodeSimilarity import Compare
 
 
-# Spinner function
-def spinner(message):
-    stop_spinner = threading.Event()
-
-    def spinning():
-        while not stop_spinner.is_set():
-            for char in "|/-\\":
-                if stop_spinner.is_set():
-                    break
-                sys.stdout.write(f"\r{message} {char}")
-                sys.stdout.flush()
-                time.sleep(0.1)
-
-    spinner_thread = threading.Thread(target=spinning, daemon=True)
-    spinner_thread.start()
-    return stop_spinner.set
-
-
 def main():
     """
     Main function to parse command-line arguments and execute the similarity checker.
@@ -33,9 +15,7 @@ def main():
         None
     """
     # Create the argument parser
-    parser = argparse.ArgumentParser(
-        description="Code Similarity Checker"
-    )
+    parser = argparse.ArgumentParser(description="Code Similarity Checker")
 
     # Create a mutually exclusive group
     group = parser.add_mutually_exclusive_group(required=True)
@@ -52,15 +32,13 @@ def main():
     file_names, file_contents = process_files(args)
 
     if len(file_names) == 2:
-        stop_spinner = spinner("Calculating similarity...")
         try:
             results = Compare(file_contents[0], file_contents[1])
-        finally:
-            stop_spinner()
-            print()
-        print(results)
+            print(results)
+        except Exception as e:
+            print(f"An error occurred during comparison: {e}")
     else:
-        print("Error: Please provide exactly two files for comparison.")
+        print("Please provide exactly two files for comparison.")
 
 
 if __name__ == "__main__":
