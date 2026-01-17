@@ -48,6 +48,7 @@ class Visitor(PythonParserVisitor):
     Special case: handle star_named_expressions to avoid excessive nodes
     e.g., [1, 2, 3, ..., k]
     """
+
     def visitStar_named_expressions(self, node):
         list_idx = node.getRuleIndex()
         self.node_count += 1
@@ -77,6 +78,11 @@ def SimilarityIndex(d, T1, T2):
     return s
 
 
+# Distance function for zss
+def label_dist(a, b):
+    return 0 if a == b else 1
+
+
 def Compare(code_a, code_b):
     T1 = ANTLR_parse(code_a)
     T2 = ANTLR_parse(code_b)
@@ -84,6 +90,6 @@ def Compare(code_a, code_b):
     N1, len_N1 = Normalize(T1)
     N2, len_N2 = Normalize(T2)
 
-    d = simple_distance(N1, N2)
+    d = simple_distance(N1, N2, label_dist=label_dist)
     s = SimilarityIndex(d, len_N1, len_N2)
     return s
