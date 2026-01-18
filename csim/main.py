@@ -1,7 +1,4 @@
 import argparse
-import sys
-import time
-import threading
 from .utils import process_files, get_file
 from .CodeSimilarity import Compare
 

@@ -35,9 +35,7 @@ class Visitor(PythonParserVisitor):
                 token = child.symbol
                 if token.type not in EXCLUDED_TOKEN_TYPES:
                     self.node_count += 1
-                    # Offset token types to avoid collision with parser rule indices
-                    token_type_index = token.type + TOKEN_TYPE_OFFSET
-                    children_nodes.append(Node(token_type_index))
+                    children_nodes.append(Node(token.type + TOKEN_TYPE_OFFSET))
             else:
                 result = self.visit(child)
                 if result is not None:
@@ -47,18 +45,13 @@ class Visitor(PythonParserVisitor):
         if len(children_nodes) == 1:
             # Single child: return it directly to avoid unnecessary nesting
             return children_nodes[0]
-        elif len(children_nodes) > 1:
-            # Multiple children: group them under a single parent node
-            self.node_count += 1
-            group = Node(GROUP_INDEX)
-            for c in children_nodes:
-                group.addkid(c)
-            return group
 
-        # Leaf node: create a node representing the current rule
+        # Create parent node for multiple children
         self.node_count += 1
-        zss_node = Node(rule_index)
-        return zss_node
+        parent_node = Node(rule_index)
+        for c in children_nodes:
+            parent_node.addkid(c)
+        return parent_node
 
     def visitStar_named_expressions(self, node):
         """Handle star_named_expressions to avoid creating excessive nodes.
