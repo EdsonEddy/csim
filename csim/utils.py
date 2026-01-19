@@ -2,6 +2,14 @@ import argparse
 from pathlib import Path
 
 
+def print_tree(node, indent=0):
+    if node is None:
+        return
+    print("   " * indent + str(node.label))
+    for child in node.children:
+        print_tree(child, indent + 1)
+
+
 def get_file(file_path):
     if not Path(file_path).is_file():
         raise argparse.ArgumentTypeError(f"File '{file_path}' does not exist.")

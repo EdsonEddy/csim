@@ -1,12 +1,10 @@
 from .python.PythonParser import PythonParser
 from .python.PythonLexer import PythonLexer
-from .python.PythonParserVisitor import PythonParserVisitor
+from .Visitors import PythonParserVisitorExtended, Java20ParserVisitorExtended
 from .java.Java20Parser import Java20Parser
 from .java.Java20Lexer import Java20Lexer
-from .java.Java20ParserVisitor import Java20ParserVisitor
 from .utils import TOKEN_TYPE_OFFSET, get_excluded_token_types
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
-from antlr4 import CommonTokenStream
 from zss import simple_distance, Node
 
 
@@ -16,9 +14,9 @@ def get_parser_visitor_class(lang):
     """
     base_visitor = None
     if lang == "python":
-        base_visitor = PythonParserVisitor
+        base_visitor = PythonParserVisitorExtended
     elif lang == "java":
-        base_visitor = Java20ParserVisitor
+        base_visitor = Java20ParserVisitorExtended
 
     if base_visitor is None:
         raise ValueError(f"Unsupported language: {lang}")
@@ -69,24 +67,6 @@ def get_parser_visitor_class(lang):
             for c in children_nodes:
                 parent_node.addkid(c)
             return parent_node
-
-        def visitStar_named_expressions(self, node):
-            """Handle star_named_expressions to avoid creating excessive nodes.
-
-            This special case prevents deeply nested structures in list/tuple literals,
-            replacing them with a single node.
-
-            Example: [1, 2, 3, ..., k] is collapsed into one node.
-
-            Args:
-                node: The star_named_expressions parse tree node.
-
-            Returns:
-                A single ZSS Node representing the entire expression list.
-            """
-            list_idx = node.getRuleIndex()
-            self.node_count += 1
-            return Node(list_idx)
 
     return ParserVisitor
 
