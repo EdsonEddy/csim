@@ -5,10 +5,14 @@ from antlr4 import Token
 EXCLUDED_RULE_INDICES = {}
 
 COLLAPSED_RULE_INDICES = {
-    PythonParser.RULE_star_named_expressions,
+    # Lists
+    PythonParser.RULE_list,
+    # Import statements
+    PythonParser.RULE_import_stmt,
 }
 
 EXCLUDED_TOKEN_TYPES = {
+    # Punctuation and structural tokens
     PythonLexer.LPAR,
     PythonLexer.RPAR,
     PythonLexer.COLON,
@@ -17,4 +21,17 @@ EXCLUDED_TOKEN_TYPES = {
     PythonLexer.DEDENT,
     PythonLexer.NEWLINE,
     Token.EOF,
+    # Keywords
+    PythonLexer.DEF,
+    PythonLexer.FOR,
+    PythonLexer.IN,
+    PythonLexer.IF,
+    PythonLexer.RETURN,
+    PythonLexer.AS,
+    PythonLexer.WHILE,
+    PythonLexer.ELSE,
+    PythonLexer.ELIF,
+    PythonLexer.TRY,
+    PythonLexer.EXCEPT,
+    PythonLexer.FINALLY,
 }
