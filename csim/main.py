@@ -30,7 +30,7 @@ def main():
     parser.add_argument(
         "--lang",
         "-l",
-        choices=["python", "java"],
+        choices=["python", "java", "cpp"],
         default="python",
         help="The programming language of the source files. Defaults to 'python'.",
     )

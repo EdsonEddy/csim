@@ -31,7 +31,7 @@ Code Similarity (csim) provide a module designed to detect similarities between 
     ```
 
 ## Usage
-csim can be used from the command line, supports Python and Java source code files. You can specify the language using the `-lang` option. By default `python` is assumed.
+csim can be used from the command line, supports Python, Java and Cpp source code files. You can specify the language using the `-lang` option. By default `python` is assumed.
 
 For Python files, use:
 ```sh
@@ -47,12 +47,17 @@ For Java files, use:
 csim -f file1.java file2.java -lang java
 ```
 
+For Cpp files, use:
+```sh
+csim -f file1.java file2.java -lang cpp
+```
+
 Alternatively, you can use csim as a Python module:
 ```python
 from csim import Compare
 code_a = "a = 5"
 code_b = "c = 50"
-similarity = Compare(code_a, code_b, lang='python')
+similarity = Compare(code_a, code_b, lang='python') # lang can be 'python', 'java' or 'cpp'
 print(f"Similarity: {similarity}")
 ```
 

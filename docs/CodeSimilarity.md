@@ -1,11 +1,11 @@
 # csim
 
-This project analyzes structural similarity between Python source code using
+This project analyzes structural similarity between source code using
 ANTLR4-generated ASTs and Zhang–Shasha Tree Edit Distance (ZSS).
 
 ## AST Normalization and ZSS Tree Construction
 
-This project compares Python source code by measuring **structural similarity**
+This project compares source code by measuring **structural similarity**
 between normalized Abstract Syntax Trees (ASTs).
 The ASTs are generated using **ANTLR4** and compared using
 **Zhang–Shasha Tree Edit Distance (ZSS)**.

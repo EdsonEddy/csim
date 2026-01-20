@@ -57,11 +57,12 @@ def get_excluded_token_types(lang):
     """
     if lang == "python":
         from .python.utils import EXCLUDED_TOKEN_TYPES as python_excluded
-
         return python_excluded
-    if lang == "java":
+    elif lang == "java":
         from .java.utils import EXCLUDED_TOKEN_TYPES as java_excluded
-
         return java_excluded
+    elif lang == "cpp":
+        from .cpp.utils import EXCLUDED_TOKEN_TYPES as cpp_excluded
+        return cpp_excluded
     else:
         return set()  # Default to empty set for unsupported languages

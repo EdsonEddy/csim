@@ -1,8 +1,10 @@
 from .python.PythonParser import PythonParser
 from .python.PythonLexer import PythonLexer
-from .Visitors import PythonParserVisitorExtended, Java20ParserVisitorExtended
 from .java.Java20Parser import Java20Parser
 from .java.Java20Lexer import Java20Lexer
+from .cpp.CPP14Lexer import CPP14Lexer
+from .cpp.CPP14Parser import CPP14Parser
+from .Visitors import PythonParserVisitorExtended, Java20ParserVisitorExtended, CPP14ParserVisitorExtended
 from .utils import TOKEN_TYPE_OFFSET, get_excluded_token_types
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
 from zss import simple_distance, Node
@@ -17,6 +19,8 @@ def get_parser_visitor_class(lang):
         base_visitor = PythonParserVisitorExtended
     elif lang == "java":
         base_visitor = Java20ParserVisitorExtended
+    elif lang == "cpp":
+        base_visitor = CPP14ParserVisitorExtended
 
     if base_visitor is None:
         raise ValueError(f"Unsupported language: {lang}")
@@ -117,6 +121,11 @@ def ANTLR_parse(code, lang):
         token_stream = CommonTokenStream(lexer)
         parser = Java20Parser(token_stream)
         tree = parser.compilationUnit()
+    elif lang == "cpp":
+        lexer = CPP14Lexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        parser = CPP14Parser(token_stream)
+        tree = parser.translationUnit()
 
     return tree
 
