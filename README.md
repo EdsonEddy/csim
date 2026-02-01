@@ -8,6 +8,7 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 - **Advanced Analysis:** Utilizes parse trees and the tree edit distance algorithm for in-depth analysis.
 - **Parse Trees:** Represents the syntactic structure of source code, enabling detailed comparisons.
 - **Tree Edit Distance:** Measures the similarity between different code structures.
+- **Hash-Based Pruning:** Optimizes the comparison process by reducing tree size while preserving essential structure.
 
 ## Technologies Used
 

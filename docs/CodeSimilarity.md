@@ -77,6 +77,14 @@ For preventing use the same integer for both rule and token nodes, token types a
 TOKEN_TYPE_OFFSET = 1000
 ```
 
+### Hash-Based Pruning
+To optimize tree size while preserving essential structure, a hash-based pruning strategy is employed.
+The pruning process involves:
+1. **Hashing Subtrees:** Each subtree is hashed to create a unique identifier.
+2. **Identifying Redundant Subtrees:** Subtrees with identical hashes are identified as redundant.
+3. **Pruning Redundant Subtrees:** Redundant subtrees are pruned from the AST, retaining only one instance of each unique subtree.
+
+
 ### Tree Edit Distance Configuration
 
 Similarity is computed using **Zhang–Shasha Tree Edit Distance (ZSS)**.
