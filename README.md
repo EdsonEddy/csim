@@ -34,8 +34,26 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 ## Usage
 csim can be used from the command line, for now only Python files are supported. In the future more languages will be added. For example, to compare two Python files, run:
 
+### Option -f (Specify Files)
+This option will compare two specified files and output the similarity index.
 ```sh
 csim -f file1.py file2.py
+```
+### Output
+```
+X.XX
+```
+
+### Option -p (Specify Directory)
+This option will compare all the files in the specified directory and output the similarity index for each pair of files.
+```sh
+csim --path /path/to/directory  
+```
+### Output
+```
+file1.py is similar to file2.py with similarity index: X.XX
+file1.py is similar to file3.py with similarity index: X.XX
+...
 ```
 
 Alternatively, you can use csim as a Python module:
@@ -44,7 +62,7 @@ from csim import Compare
 code_a = "a = 5"
 code_b = "c = 50"
 similarity = Compare(code_a, code_b)
-print(f"Similarity: {similarity}")
+print(f"Similarity: {similarity}") # Output: Similarity: X.XX
 ```
 
 ## ANTLR4 Instalation and Parser/Lexer Generation
