@@ -32,7 +32,7 @@ Code Similarity (csim) provide a module designed to detect similarities between 
     ```
 
 ## Usage
-csim can be used from the command line, for now only Python files are supported. In the future more languages will be added. For example, to compare two Python files, run:
+csim can be used from the command line. For now, only Python files are supported; more languages will be added in future versions. For example, to compare two Python files, run:
 
 ### Option -f (Specify Files)
 This option will compare two specified files and output the similarity index.
@@ -56,6 +56,16 @@ file1.py is similar to file3.py with similarity index: X.XX
 ...
 ```
 
+Notes:
+- Only `.py` files within the directory are considered.
+- The output uses full file paths when reporting similarities.
+
+### Option -l (Specify Language)
+You can specify the input language. Currently, only `python` is supported and it is the default.
+```sh
+csim -f file1.py file2.py --lang python
+```
+
 Alternatively, you can use csim as a Python module:
 ```python
 from csim import Compare
@@ -65,8 +75,8 @@ similarity = Compare(code_a, code_b)
 print(f"Similarity: {similarity}") # Output: Similarity: X.XX
 ```
 
-## ANTLR4 Instalation and Parser/Lexer Generation
-This instalation is not required the files are already included in the project. But if you can review the steps to generate them yourself in the [grammars/README.md](grammars/parser_gen_guide.md) file.
+## ANTLR4 Installation and Parser/Lexer Generation
+This installation is not required—the generated files are already included in the project. If you'd like to review the steps to generate them yourself, see [grammars/parser_gen_guide.md](grammars/parser_gen_guide.md).
 
 ## Contributing
 
