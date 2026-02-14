@@ -26,11 +26,11 @@ results = []
 for p in dir.iterdir():
     if p.is_file() and ".py" in str(p):
         try:
-            _, content = read_file(str(p))
+            file_name, content = read_file(str(p))
             if content is None:
                 # Error already printed in read_file; skip this file
                 continue
-            T = ANTLR_parse(content, lang)
+            T = ANTLR_parse(file_name, content, lang)
             N1 = Normalize(T, lang)
             P1, len_P1 = PruneAndHash(N1, lang)
             results.append(len_P1)
