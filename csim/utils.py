@@ -100,13 +100,15 @@ def get_hash_rule_indices(lang):
         return set()  # Default to empty set for unsupported languages
 
 
-def preprocess_code(code_string, lang="python"):
+def preprocess_code(file_name, file_content, lang="python"):
     # Local import to avoid circular dependency at module import time
     from .CodeSimilarity import ANTLR_parse, Normalize, PruneAndHash
 
-    T1 = ANTLR_parse(code_string, lang)
+    T1 = ANTLR_parse(file_name, file_content, lang)
     normalized_tree = Normalize(T1, lang)
-    return PruneAndHash(normalized_tree, lang)
+    pruned_tree, pruned_count = PruneAndHash(normalized_tree, lang)
+
+    return pruned_tree, pruned_count
 
 
 from zss import simple_distance
@@ -127,7 +129,8 @@ def compare_all(file_names, file_contents, args):
 
     file_number = len(file_names)
     proccesed_files = [
-        preprocess_code(file_content, args.lang) for file_content in file_contents
+        preprocess_code(file_names[idx], file_contents[idx], args.lang)
+        for idx in range(file_number)
     ]
 
     # Create a matrix to store similarity percentages

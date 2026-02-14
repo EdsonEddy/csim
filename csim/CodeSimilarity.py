@@ -1,10 +1,24 @@
+import sys
 from .python.PythonParser import PythonParser
 from .python.PythonLexer import PythonLexer
 from .Visitors import PythonParserVisitorExtended
 from .utils import TOKEN_TYPE_OFFSET, get_excluded_token_types, get_hash_rule_indices
 import hashlib
 from antlr4 import InputStream, CommonTokenStream, TerminalNode
+from antlr4.error.ErrorListener import ErrorListener
 from zss import simple_distance, Node
+
+
+class ExtendedErrorListener(ErrorListener):
+    def __init__(self, file_name=""):
+        super(ExtendedErrorListener, self).__init__()
+        self.file_name = file_name
+
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        print(
+            f"Syntax error in file {self.file_name} line {line}:{column} {msg}",
+            file=sys.stderr,
+        )
 
 
 def get_parser_visitor_class(lang):
@@ -141,24 +155,34 @@ def Normalize(tree, lang):
     return normalized_tree
 
 
-def ANTLR_parse(code, lang):
-    """Parse source code into an ANTLR parse tree.
+def ANTLR_parse(file_name, file_content, lang):
+    """Parse source code into an ANTLR parse tree and handle syntax errors.
+
 
     Args:
-        code: source code as a string.
+        file_name: Name of the source file (used for error reporting).
+        file_content: Source code as a string to be parsed.
         lang: programming language of the source code (e.g. python, java, etc.).
 
     Returns:
         ANTLR parse tree representing the code's syntactic structure.
     """
+
     tree = None
     parser = None
-    input_stream = InputStream(code)
+    input_stream = InputStream(file_content)
+    error_listener = ExtendedErrorListener(file_name)
 
     if lang == "python":
+        # Lexing the input code to create a token stream
         lexer = PythonLexer(input_stream)
+        lexer.removeErrorListeners()
+        lexer.addErrorListener(error_listener)
+        # Parsing the token stream to create a parse tree
         token_stream = CommonTokenStream(lexer)
         parser = PythonParser(token_stream)
+        parser.removeErrorListeners()
+        parser.addErrorListener(error_listener)
         tree = parser.file_input()
 
     return tree
@@ -206,7 +230,9 @@ def label_dist(a, b):
     return 0 if a == b else 1
 
 
-def Compare(code_a, code_b, lang="python"):
+def Compare(
+    name_a="Snippet A", content_a="", name_b="Snippet B", content_b="", lang="python"
+):
     """Compare two Python code snippets and compute their similarity.
 
     The comparison process:
@@ -216,8 +242,11 @@ def Compare(code_a, code_b, lang="python"):
     4. Calculate normalized similarity index
 
     Args:
-        code_a: First Python code snippet as a string.
-        code_b: Second Python code snippet as a string.
+        name_a: Name of the first code snippet (used for error reporting).
+        content_a: First Python code snippet as a string.
+        name_b: Name of the second code snippet (used for error reporting).
+        content_b: Second Python code snippet as a string.
+        lang: Programming language of the code snippets (default is "python").
 
     Returns:
         float: Similarity score in the range [0, 1], where 1 indicates
@@ -226,8 +255,8 @@ def Compare(code_a, code_b, lang="python"):
 
     try:
         # Parse both code snippets into ANTLR parse trees
-        T1 = ANTLR_parse(code_a, lang)
-        T2 = ANTLR_parse(code_b, lang)
+        T1 = ANTLR_parse(name_a, content_a, lang)
+        T2 = ANTLR_parse(name_b, content_b, lang)
 
         # Normalize parse trees and get node counts
         NT1 = Normalize(T1, lang)
