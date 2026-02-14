@@ -1,6 +1,5 @@
 import argparse
 from .utils import process_files, compare_all, get_file
-from .CodeSimilarity import Compare
 
 
 def main():
@@ -49,12 +48,10 @@ def main():
     file_names, file_contents = process_files(args)
 
     try:
-        if len(file_names) == 2:
-            results = Compare(file_contents[0], file_contents[1], args.lang)
-        elif len(file_names) > 2:
+        if len(file_names) >= 2:
             results = compare_all(file_names, file_contents, args)
         else:
-            results = "Please provide exactly two files for comparison."
+            results = "Please provide at least two files for comparison."
         print(results)
     except Exception as e:
         print(f"An error occurred during comparison: {e}")
