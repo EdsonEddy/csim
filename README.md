@@ -37,20 +37,22 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 - **zss:** 1.2.0
 
 ## Usage
-csim can be used from the command line. For now, only Python files are supported; more languages will be added in future versions. For example, to compare two Python files, run:
+csim can be used from the command line. For now, only Python files are supported; more languages will be added in future versions. 
 
-### Option -f (Specify Files)
+For example, to compare two Python files, run:
+
+### Option --files (Specify Files)
 This option will compare two specified files and output the similarity index.
 ```sh
-csim -f file1.py file2.py
+csim --files file1.py file2.py
 ```
 ### Output
 ```
 file1.py is similar to file2.py with similarity index: X.XX
 ```
 
-### Option -p (Specify Directory)
-This option will compare all the files in the specified directory and output the similarity index for each pair of files.
+### Option --path (Specify Directory)
+This option will compare all the files in the specified directory and output the similarity index for each pair of files. This option is expensive in terms of time complexity, so it is recommended to use it with a small number of files.
 ```sh
 csim --path /path/to/directory  
 ```
@@ -66,13 +68,34 @@ Notes:
 - Only `.py` files within the directory are considered.
 - The output uses full file paths when reporting similarities.
 
-### Option -l (Specify Language)
+### Option --lang (Specify Language)
 You can specify the input language. Currently, only `python` is supported and it is the default.
 ```sh
-csim -f file1.py file2.py --lang python
+csim --files file1.py file2.py --lang python
 ```
 
-Alternatively, you can use csim as a Python module:
+### Option --threshold (Specify Similarity Threshold)
+You can specify a similarity threshold to group files based on their similarity.
+Only available when using the `--files` option. If the similarity index is above the threshold, it will be reported in the output.
+```sh
+csim --path /path/to/directory --threshold 0.7
+```
+### Output
+```sh
+Threshold: 0.7
+Total files processed: N
+Group 1 (Average similarity: X.XX):
+  file1.py
+  file2.py
+Group 2 (Average similarity: X.XX):
+  file3.py
+  file4.py
+...
+Unique files (similarity below threshold):
+  fileN.py
+```
+
+### Alternatively, you can use csim as a Python module:
 ```python
 from csim import Compare
 code_a = "a = 5"

@@ -27,3 +27,4 @@ __pycache__/
 test
 
 notebooks/large_dataset
+notebooks/small_dataset
