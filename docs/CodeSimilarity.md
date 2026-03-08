@@ -1,15 +1,15 @@
 # csim
 
 This project analyzes structural similarity between Python source code using
-ANTLR4-generated ASTs and Zhang–Shasha Tree Edit Distance (ZSS).
+ANTLR4-generated Parse Trees and Zhang–Shasha Tree Edit Distance (ZSS).
 
 For next versions, support for additional programming languages will be added.
 
-## AST Normalization and ZSS Tree Construction
+## Parse Tree Normalization and ZSS Tree Construction
 
 This project compares Python source code by measuring **structural similarity**
-between normalized Abstract Syntax Trees (ASTs).
-The ASTs are generated using **ANTLR4** and compared using
+between normalized Parse Trees.
+The Parse Trees are generated using **ANTLR4** and compared using
 **Zhang–Shasha Tree Edit Distance (ZSS)**.
 
 ### Version Baseline
@@ -41,7 +41,7 @@ Collapsed rules are defined using explicit sets of rule indices:
 COLLAPSED_RULE_INDICES: set[int]
 ```
 
-These rules are collapsed to reduce AST depth and noise. In the current implementation, when a collapsed rule is visited it is replaced by a single node labeled with its `ruleIndex` and its children are not traversed. This creates a compact representation for list-like or syntactically noisy constructs.
+These rules are collapsed to reduce Parse Tree depth and noise. In the current implementation, when a collapsed rule is visited it is replaced by a single node labeled with its `ruleIndex` and its children are not traversed. This creates a compact representation for list-like or syntactically noisy constructs.
 
 #### Excluded Lexer Tokens
 
@@ -77,7 +77,7 @@ This normalization reduces false differences when comparing code that uses diffe
 
 ### Selective Child Exclusion
 
-Some rules contain children that do not contribute meaningful structural information for comparison purposes. These children can be selectively excluded to reduce noise in the AST.
+Some rules contain children that do not contribute meaningful structural information for comparison purposes. These children can be selectively excluded to reduce noise in the Parse Tree.
 
 Excluded children are defined as:
 
@@ -128,7 +128,7 @@ To optimize tree size while preserving essential structure, a hash-based pruning
 The pruning process involves:
 1. **Hashing Subtrees:** Each subtree is hashed to create a unique identifier.
 2. **Identifying Redundant Subtrees:** Subtrees with identical hashes are identified as redundant.
-3. **Pruning Redundant Subtrees:** Redundant subtrees are pruned from the AST, retaining only one instance of each unique subtree.
+3. **Pruning Redundant Subtrees:** Redundant subtrees are pruned from the Parse Tree, retaining only one instance of each unique subtree.
 
 Rules whose subtrees are subject to hashing for pruning are defined as:
 
@@ -168,9 +168,9 @@ def SimilarityIndex(d, T1, T2):
 ```
 
 Where:
-- `d`: Tree edit distance between the two ASTs
-- `T1`: Number of nodes in the first AST
-- `T2`: Number of nodes in the second AST
+- `d`: Tree edit distance between the two Parse Trees
+- `T1`: Number of nodes in the first Parse Tree
+- `T2`: Number of nodes in the second Parse Tree
 
 The similarity index typically ranges from `0.0` (completely different) to `1.0` (identical).
 
@@ -180,7 +180,7 @@ The similarity index typically ranges from `0.0` (completely different) to `1.0`
 These design choices provide:
 
 - Deterministic and reproducible comparisons
-- Clear justification of AST transformations
+- Clear justification of Parse Tree transformations
 - Fine-grained control over abstraction levels
 - Semantic equivalence through control flow normalization
 - Reduced noise through targeted child exclusion

@@ -1,5 +1,5 @@
 import argparse
-from .utils import process_files, compare_all, get_file
+from .utils import group_by_similarity, process_files, compare_all, get_file
 
 
 def main():
@@ -8,6 +8,8 @@ def main():
     Arguments:
         --files, -f (str, nargs=2): The input two files to compare.
         --path, -p (str): Path to the directory containing the source code files.
+        --lang, -l (str): The programming language of the source files. Defaults to 'python'.
+        --threshold, -t (float): Similarity threshold between 0.0 and 1.0. Only valid when used with --path/-p option.
     Returns:
         None
     """
@@ -24,7 +26,7 @@ def main():
         "--path",
         "-p",
         type=str,
-        help="Path to the directory containing the source code files. All files in the directory will be compared against each other.",
+        help="Path to the directory containing the source code files to compare.",
     )
 
     # Add the 'files' argument to the group
@@ -41,15 +43,32 @@ def main():
         help="The programming language of the source files. Defaults to 'python'.",
     )
 
+    # Optional threshold used only when --path is selected
+    parser.add_argument(
+        "--threshold",
+        "-t",
+        type=float,
+        help="Similarity threshold between 0.0 and 1.0. Only valid when used with --path/-p option.",
+    )
     # Parse the arguments
     args = parser.parse_args()
+
+    # Validate conditional use of --threshold: only allowed with --path
+    if args.threshold is not None:
+        if not args.path:
+            parser.error("argument --threshold: can only be used with --path/-p")
+        if not (0.0 <= args.threshold <= 1.0):
+            parser.error("argument --threshold: must be between 0.0 and 1.0")
 
     # Process the files
     file_names, file_contents = process_files(args)
 
     try:
         if len(file_names) >= 2:
-            results = compare_all(file_names, file_contents, args)
+            if args.threshold is not None:
+                results = group_by_similarity(file_names, file_contents, args)
+            else:
+                results = compare_all(file_names, file_contents, args)
         else:
             results = "Please provide at least two files for comparison."
         print(results)

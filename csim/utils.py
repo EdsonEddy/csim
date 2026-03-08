@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 import os
+from .DataStructures import UFDS as UnionFind
 
 
 def get_file(file_path):
@@ -192,11 +193,77 @@ def compare_all(file_names, file_contents, args):
                 similarity_matrix[i + 1][j + 1] = 1.00
             else:
                 file_b = proccesed_files[j]
-                similarity_percentage = get_similarity_coefficient(file_a, file_b)
-                similarity_matrix[i + 1][j + 1] = round(similarity_percentage, 2)
-                similarity_matrix[j + 1][i + 1] = round(similarity_percentage, 2)
+                similarity_index = get_similarity_coefficient(file_a, file_b)
+                similarity_matrix[i + 1][j + 1] = round(similarity_index, 2)
+                similarity_matrix[j + 1][i + 1] = round(similarity_index, 2)
                 results.append(
-                    f"{file_names[i]} is similar to {file_names[j]} with similarity index: {similarity_percentage}"
+                    f"{file_names[i]} is similar to {file_names[j]} with similarity index: {similarity_index}"
                 )
 
     return "\n".join(results)
+
+
+def get_output_by_group(file_names, groups, similarity_indices, threshold):
+    result = []
+    unique_files = []
+
+    result.append(f"Threshold: {threshold}")
+    result.append(f"Total files processed: {len(file_names)}")
+
+    groups_cnt = 1
+    for file_group in groups:
+        if len(file_group) > 1:
+            avg_similarity = sum(
+                similarity_indices[file] for file in file_group[1:]
+            ) / (len(file_group) - 1)
+            result.append(
+                f"Group {groups_cnt} (Average Similarity: {avg_similarity:.2f}):"
+            )
+            result.extend([file_names[file] for file in file_group])
+            groups_cnt += 1
+        else:
+            unique_files.append(file_names[file_group[0]])
+
+    if unique_files:
+        result.append(f"Unique Files (similarity below threshold):")
+        for file in unique_files:
+            result.append(file)
+
+    return "\n".join(result)
+
+
+def group_by_similarity(file_names, file_contents, args):
+
+    threshold = args.threshold
+    file_number = len(file_names)
+    grouper = UnionFind(file_number)
+
+    proccesed_files = [
+        preprocess_code(file_names[idx], file_contents[idx], args.lang)
+        for idx in range(file_number)
+    ]
+
+    similarity_indices = [0.00] * file_number
+
+    for i in range(file_number - 1):
+        if grouper.find(i) == i:
+            file_a = proccesed_files[i]
+            for j in range(i + 1, file_number):
+                if grouper.find(j) == j:
+                    file_b = proccesed_files[j]
+                    similarity_index = get_similarity_coefficient(file_a, file_b)
+                    if similarity_index > threshold:
+                        grouper.union(i, j)
+                        similarity_indices[j] = similarity_index
+
+    groups = {}
+
+    for i in range(file_number):
+        root = grouper.find(i)
+        if root not in groups:
+            groups[root] = []
+        groups[root].append(i)
+
+    groups = list(groups.values())
+
+    return get_output_by_group(file_names, groups, similarity_indices, threshold)
