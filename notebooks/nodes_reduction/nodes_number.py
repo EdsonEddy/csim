@@ -15,7 +15,7 @@ import sys
 from csim import ANTLR_parse, Normalize, PruneAndHash
 from csim.utils import read_file
 
-path = sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).parent / "../large_dataset")
+path = sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).parent / "../datasets/large")
 dir = Path(path)
 
 if not dir.is_dir():
