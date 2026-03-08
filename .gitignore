@@ -26,5 +26,4 @@ __pycache__/
 # Testing grammar files
 test
 
-notebooks/large_dataset
-notebooks/small_dataset
+notebooks/datasets

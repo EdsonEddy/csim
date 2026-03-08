@@ -61,14 +61,14 @@ def main():
             parser.error("argument --threshold: must be between 0.0 and 1.0")
 
     # Process the files
-    file_names, file_contents = process_files(args)
+    file_names, file_contents = process_files(args.path, args.files)
 
     try:
         if len(file_names) >= 2:
             if args.threshold is not None:
-                results = group_by_similarity(file_names, file_contents, args)
+                results = group_by_similarity(file_names, file_contents, args.lang, args.threshold)
             else:
-                results = compare_all(file_names, file_contents, args)
+                results = compare_all(file_names, file_contents, args.lang)
         else:
             results = "Please provide at least two files for comparison."
         print(results)

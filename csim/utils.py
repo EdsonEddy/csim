@@ -34,14 +34,13 @@ def read_file(file_path):
         return file_path, None
 
 
-def process_files(args):
+def process_files(path, files):
     # Storage for file names and contents
     file_names = []
     file_contents = []
 
     # Process the files based on the provided arguments
-    if args.path:
-        path = args.path
+    if path:
         # Check if the path is a valid directory
         if not os.path.isdir(path):
             print(f"Error: The path '{path}' is not a valid directory.")
@@ -54,8 +53,8 @@ def process_files(args):
                 # Store the file name and content
                 file_names.append(file_name)
                 file_contents.append(content)
-    elif args.files:
-        file1, file2 = args.files
+    elif files:
+        file1, file2 = files
         file_name1, content1 = read_file(file1)
         file_name2, content2 = read_file(file2)
         # Store the file name and content
@@ -164,11 +163,11 @@ def get_similarity_coefficient(proccesed_code1, proccesed_code2):
     return result
 
 
-def compare_all(file_names, file_contents, args):
+def compare_all(file_names, file_contents, lang):
 
     file_number = len(file_names)
     proccesed_files = [
-        preprocess_code(file_names[idx], file_contents[idx], args.lang)
+        preprocess_code(file_names[idx], file_contents[idx], lang)
         for idx in range(file_number)
     ]
 
@@ -232,14 +231,13 @@ def get_output_by_group(file_names, groups, similarity_indices, threshold):
     return "\n".join(result)
 
 
-def group_by_similarity(file_names, file_contents, args):
+def group_by_similarity(file_names, file_contents, lang, threshold):
 
-    threshold = args.threshold
     file_number = len(file_names)
     grouper = UnionFind(file_number)
 
     proccesed_files = [
-        preprocess_code(file_names[idx], file_contents[idx], args.lang)
+        preprocess_code(file_names[idx], file_contents[idx], lang)
         for idx in range(file_number)
     ]
 
