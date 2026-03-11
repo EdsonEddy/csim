@@ -149,21 +149,19 @@ def preprocess_code(file_name, file_content, lang="python"):
     return pruned_tree, pruned_count
 
 
-from zss import simple_distance
-
-
-def get_similarity_coefficient(proccesed_code1, proccesed_code2):
+def get_similarity_coefficient(proccesed_code1, proccesed_code2, ted_algorithm):
     N1, len_N1 = proccesed_code1
     N2, len_N2 = proccesed_code2
-    d = simple_distance(N1, N2)
-    # Local import to avoid circular dependency at module import time
-    from .CodeSimilarity import SimilarityIndex
 
+    # Local import to avoid circular dependency at module import time
+    from .CodeSimilarity import SimilarityIndex, TreeEditDistance
+
+    d = TreeEditDistance(N1, N2, ted_algorithm)
     result = SimilarityIndex(d, len_N1, len_N2)
     return result
 
 
-def compare_all(file_names, file_contents, lang):
+def compare_all(file_names, file_contents, lang, ted_algorithm):
 
     file_number = len(file_names)
     proccesed_files = [
@@ -192,7 +190,7 @@ def compare_all(file_names, file_contents, lang):
                 similarity_matrix[i + 1][j + 1] = 1.00
             else:
                 file_b = proccesed_files[j]
-                similarity_index = get_similarity_coefficient(file_a, file_b)
+                similarity_index = get_similarity_coefficient(file_a, file_b, ted_algorithm)
                 similarity_matrix[i + 1][j + 1] = round(similarity_index, 2)
                 similarity_matrix[j + 1][i + 1] = round(similarity_index, 2)
                 results.append(
@@ -231,7 +229,7 @@ def get_output_by_group(file_names, groups, similarity_indices, threshold):
     return "\n".join(result)
 
 
-def group_by_similarity(file_names, file_contents, lang, threshold):
+def group_by_similarity(file_names, file_contents, lang, threshold, ted_algorithm):
 
     file_number = len(file_names)
     grouper = UnionFind(file_number)
@@ -249,7 +247,9 @@ def group_by_similarity(file_names, file_contents, lang, threshold):
             for j in range(i + 1, file_number):
                 if grouper.find(j) == j:
                     file_b = proccesed_files[j]
-                    similarity_index = get_similarity_coefficient(file_a, file_b)
+                    similarity_index = get_similarity_coefficient(
+                        file_a, file_b, ted_algorithm
+                    )
                     if similarity_index > threshold:
                         grouper.union(i, j)
                         similarity_indices[j] = similarity_index

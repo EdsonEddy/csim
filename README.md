@@ -15,8 +15,10 @@ Code Similarity (csim) provide a module designed to detect similarities between 
 - **Python:** The core programming language for the tool.
 - **ANTLR:** A parser generator for creating parse trees from source code.
 - **zss:** A library for calculating the tree edit distance.
+- **apted:** A library for computing the tree edit distance, alternatively to zss.
 
 ## Installation
+For the installation `pip` is required, you can either clone the repository and install it locally or install it directly from PyPI.
 
 1.  Clone the repository:
     ```sh
@@ -31,10 +33,16 @@ Code Similarity (csim) provide a module designed to detect similarities between 
     pip install .
     ```
 
+Alternatively, you can install it directly from PyPI:
+```sh
+pip install csim
+```
+
 ### Version Compatibility
 - **Python:** 3.9–3.12 (recommended 3.11)
 - **ANTLR4 Python Runtime:** 4.13.2
 - **zss:** 1.2.0
+- **apted:** 1.0.3
 
 ## Usage
 csim can be used from the command line. For now, only Python files are supported; more languages will be added in future versions. 
@@ -47,7 +55,7 @@ This option will compare two specified files and output the similarity index.
 csim --files file1.py file2.py
 ```
 ### Output
-```
+```sh
 file1.py is similar to file2.py with similarity index: X.XX
 ```
 
@@ -57,7 +65,7 @@ This option will compare all the files in the specified directory and output the
 csim --path /path/to/directory  
 ```
 ### Output
-```
+```sh
 file1.py is similar to file2.py with similarity index: X.XX
 file1.py is similar to file3.py with similarity index: X.XX
 ...
@@ -93,6 +101,12 @@ Group 2 (Average similarity: X.XX):
 ...
 Unique files (similarity below threshold):
   fileN.py
+```
+
+### Option --talg (Specify Tree Edit Distance Algorithm)
+You can specify the tree edit distance algorithm to use for comparisons. The available options are `zss` (default) and `apted`.
+```sh
+csim --files file1.py file2.py --talg apted
 ```
 
 ### Alternatively, you can use csim as a Python module:
@@ -138,6 +152,7 @@ For more information on the techniques and tools used in this project, refer to 
 - [Tree Edit Distance (Wikipedia)](https://en.wikipedia.org/wiki/Tree_edit_distance)
 - [zss (PyPI)](https://pypi.org/project/zss/)
 - [Hashing](https://docs.python.org/es/3/library/hashlib.html)
+- [apted (GitHub)](https://github.com/JoaoFelipe/apted)
 
 ## Third-Party Licenses
 
@@ -159,3 +174,7 @@ This project utilizes the following third-party libraries:
 - **License:** MIT License
 - **Repository:** [https://github.com/timtadh/zhang-shasha](https://github.com/timtadh/zhang-shasha)
 
+### apted (All Path Tree Edit Distance)
+- **Purpose:** Python APTED algorithm for the Tree Edit Distance, an alternative to zss
+- **License:** MIT License
+- **Repository:** [https://github.com/JoaoFelipe/apted](https://github.com/JoaoFelipe/apted)

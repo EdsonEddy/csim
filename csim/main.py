@@ -10,6 +10,8 @@ def main():
         --path, -p (str): Path to the directory containing the source code files.
         --lang, -l (str): The programming language of the source files. Defaults to 'python'.
         --threshold, -t (float): Similarity threshold between 0.0 and 1.0. Only valid when used with --path/-p option.
+        --talg, -ta (string): The tree edit distance algorithm to use. Defaults to 'zss'.
+        --help, -h: Show this help message and exit.
     Returns:
         None
     """
@@ -50,6 +52,16 @@ def main():
         type=float,
         help="Similarity threshold between 0.0 and 1.0. Only valid when used with --path/-p option.",
     )
+
+    # Optional argument for tree edit distance algorithm
+    parser.add_argument(
+        "--talg",
+        "-ta",
+        choices=["zss", "apted"],
+        default="zss",
+        help="The tree edit distance algorithm to use. Defaults to 'zss'.",
+    )
+
     # Parse the arguments
     args = parser.parse_args()
 
@@ -66,9 +78,9 @@ def main():
     try:
         if len(file_names) >= 2:
             if args.threshold is not None:
-                results = group_by_similarity(file_names, file_contents, args.lang, args.threshold)
+                results = group_by_similarity(file_names, file_contents, args.lang, args.threshold, args.talg)
             else:
-                results = compare_all(file_names, file_contents, args.lang)
+                results = compare_all(file_names, file_contents, args.lang, args.talg)
         else:
             results = "Please provide at least two files for comparison."
         print(results)
