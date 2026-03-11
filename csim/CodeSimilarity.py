@@ -221,6 +221,38 @@ def ANTLR_parse(file_name, file_content, lang):
     return tree
 
 
+def TreeEditDistance(N1, N2, ted_algorithm="zss"):
+    """Calculate the tree edit distance between two trees using the specified algorithm.
+    Args:
+        N1: First tree (root node).
+        N2: Second tree (root node).
+        ted_algorithm: The tree edit distance algorithm to use ('zss' or 'apted').
+    Returns:
+        int: The computed tree edit distance between the two trees.
+    """
+    if ted_algorithm == "zss":
+        from zss import simple_distance
+
+        d = simple_distance(N1, N2)
+    elif ted_algorithm == "apted":
+        from apted import APTED, Config
+
+        class CustomConfig(Config):
+            def rename(self, node1, node2):
+                """Compares attribute .value of trees"""
+                return 1 if node1.label != node2.label else 0
+
+            def children(self, node):
+                """Get childrens of a node"""
+                return node.children
+
+        apted = APTED(N1, N2, CustomConfig())
+        d = apted.compute_edit_distance()
+    else:
+        d = 0
+    return d
+
+
 def SimilarityIndex(d, T1, T2):
     """Calculate the similarity index between two trees.
 
@@ -250,21 +282,13 @@ def SimilarityIndex(d, T1, T2):
     return s
 
 
-def label_dist(a, b):
-    """Calculate the distance between two tree nodes for ZSS algorithm.
-
-    Args:
-        a: label of node a.
-        b: label of node b.
-
-    Returns:
-        int: 0 if nodes match (or subtrees are identical), 1 otherwise.
-    """
-    return 0 if a == b else 1
-
-
 def Compare(
-    name_a="Snippet A", content_a="", name_b="Snippet B", content_b="", lang="python"
+    name_a="Snippet A",
+    content_a="",
+    name_b="Snippet B",
+    content_b="",
+    lang="python",
+    ted_algorithm="zss",
 ):
     """Compare two Python code snippets and compute their similarity.
 
@@ -272,7 +296,7 @@ def Compare(
     1. Parse both code snippets into ANTLR parse trees
     2. Normalize the parse trees to a ZSS tree structure, excluding irrelevant tokens and collapsing certain rules.
     3. Prune and hash the normalized trees to reduce noise and improve comparison efficiency.
-    4. Compute the tree edit distance using the Zhang-Shasha algorithm.
+    4. Compute the tree edit distance using the specified algorithm (e.g., ZSS or APTED).
     5. Calculate and return a normalized similarity index based on the edit distance and tree sizes.
 
     Args:
@@ -281,7 +305,7 @@ def Compare(
         name_b: Name of the second code snippet (used for error reporting).
         content_b: Second Python code snippet as a string.
         lang: Programming language of the code snippets (default is "python").
-
+        ted_algorithm: The tree edit distance algorithm to use ('zss' or 'apted').
     Returns:
         float: Similarity score in the range [0, 1], where 1 indicates
                identical code structure and 0 indicates maximum difference.
@@ -300,8 +324,8 @@ def Compare(
         PT1, len_PT1 = PruneAndHash(NT1, lang)
         PT2, len_PT2 = PruneAndHash(NT2, lang)
 
-        # Compute tree edit distance using Zhang-Shasha algorithm
-        d = simple_distance(PT1, PT2, label_dist=label_dist)
+        # Compute tree edit distance using the specified algorithm
+        d = TreeEditDistance(PT1, PT2, ted_algorithm=ted_algorithm)
 
         # Calculate and return normalized similarity index
         s = SimilarityIndex(d, len_PT1, len_PT2)

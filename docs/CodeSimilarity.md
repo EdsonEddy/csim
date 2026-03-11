@@ -1,7 +1,7 @@
 # csim
 
 This project analyzes structural similarity between Python source code using
-ANTLR4-generated Parse Trees and Zhang–Shasha Tree Edit Distance (ZSS).
+ANTLR4-generated Parse Trees and Tree Edit Distance (ZSS or APTED).
 
 For next versions, support for additional programming languages will be added.
 
@@ -10,12 +10,13 @@ For next versions, support for additional programming languages will be added.
 This project compares Python source code by measuring **structural similarity**
 between normalized Parse Trees.
 The Parse Trees are generated using **ANTLR4** and compared using
-**Zhang–Shasha Tree Edit Distance (ZSS)**.
+**Tree Edit Distance (ZSS or APTED)**
 
 ### Version Baseline
 - **Python:** 3.9–3.12 (recommended 3.11)
 - **ANTLR4 Python Runtime:** 4.13.2
 - **zss:** 1.2.0
+- **apted:** 1.0.3
 
 To ensure **experimental reproducibility, efficiency, and traceability**,
 the following design decisions are applied.
@@ -138,7 +139,7 @@ HASHED_RULE_INDICES: set[int]
 
 ### Tree Edit Distance Configuration
 
-Similarity is computed using **Zhang–Shasha Tree Edit Distance (ZSS)**.
+Similarity is computed using **Tree Edit Distance (ZSS or APTED)**.
 
 Recommended base costs:
 
